@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -13,12 +13,12 @@ public class ServoMoves {
         shooterServo.setPosition(0);
         try {
             Thread.sleep(1000);
-        } catch (InterruptedException ignored) { ;
+        } catch (InterruptedException ignored) { 
         }
         shooterServo.setPosition(1);
         try {
             Thread.sleep(1000);
-        } catch (InterruptedException ignored) { ;
+        } catch (InterruptedException ignored) {
         }
     }
 }

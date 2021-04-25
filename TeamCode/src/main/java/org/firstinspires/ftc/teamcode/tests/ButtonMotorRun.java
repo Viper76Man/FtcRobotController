@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,25 +6,26 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Disabled
+
 @TeleOp
+public class ButtonMotorRun extends LinearOpMode {
 
-public class OneMotorRun extends LinearOpMode {
-
-    private DcMotor motorTest;
-
+    private DcMotor shooterMotor;
     @Override
-
     public void runOpMode() {
-        motorTest = hardwareMap.get(DcMotor.class, "motorTest");
+        shooterMotor = hardwareMap.get(DcMotor.class, "shooterMotor");
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double rt= -gamepad1.right_trigger;
-            motorTest.setPower (rt);
-            telemetry.addData("Right Trigger", rt);
-            telemetry.update();
-        }
+            if (gamepad1.a){
+                shooterMotor.setPower(.5);
+            }
+            if (gamepad1.x){
+                shooterMotor.setPower(0);
+            }
     }
+}
 }
