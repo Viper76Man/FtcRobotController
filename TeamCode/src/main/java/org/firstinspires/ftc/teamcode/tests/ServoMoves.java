@@ -13,7 +13,7 @@ public class ServoMoves {
         shooterServo.setPosition(0);
         try {
             Thread.sleep(1000);
-        } catch (InterruptedException ignored) { 
+        } catch (InterruptedException ignored) {
         }
         shooterServo.setPosition(1);
         try {
