@@ -13,8 +13,8 @@ public class CompleteShooter {
     private static DcMotorEx shooterMotor;
     private static double MOTOR_TICKS_PER_REV = 28;
     private FtcDashboard dashboard = FtcDashboard.getInstance();
-    private static double POWER_SHOT_SPEED = 4020;
-    private static double HIGH_GOAL_SPEED = 4260;
+    private static double POWER_SHOT_SPEED = 3200;
+    private static double HIGH_GOAL_SPEED = 3600;
 
     public void init(HardwareMap hwMap) {
         shooterMotor = hwMap.get(DcMotorEx.class, "shooterMotor");
