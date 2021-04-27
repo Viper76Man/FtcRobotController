@@ -18,6 +18,4 @@ apply from: '../build.dependencies.gradle'
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
-    //Added for FTCLib
-    implementation 'com.arcrobotics:ftclib:1.1.6'
 }
