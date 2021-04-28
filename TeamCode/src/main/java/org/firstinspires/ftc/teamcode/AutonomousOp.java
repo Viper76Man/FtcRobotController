@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.drive.Drive;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -106,18 +109,25 @@ public class AutonomousOp extends LinearOpMode {
                 }
             }
         }
+        Pose2d startPose = new Pose2d(-63, -54, Math.toRadians(0));
+
+        drive.setPoseEstimate(startPose);
 
 
         waitForStart();
             tfod.shutdown();
 
-            while(opModeIsActive()){
                 telemetry.addData("Disks Detected", diskDetect);
                 telemetry.update();
+
+                Trajectory nextToDisk = drive.trajectoryBuilder(new Pose2d())
+                        .splineTo(new Vector2d(20,1),Math.toRadians(0))
+                        .build();
 
                 //0 disks zone A front
                 if (diskDetect == 0) {
                     //Drive to square A
+                    drive.followTrajectory(nextToDisk);
                     //Arm out
                     //Servo open
                     //Arm in
@@ -175,7 +185,6 @@ public class AutonomousOp extends LinearOpMode {
                     //Stop
                 }
             }
-    }
 
     /**
      * Initialize the Vuforia localization engine.
