@@ -58,7 +58,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 
-public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive {
+public class RRMecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
@@ -100,7 +100,7 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
 
     private Pose2d lastPoseOnTurn;
 
-    public MecanumDrive(HardwareMap hardwareMap) {
+    public RRMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         //dashboard = FtcDashboard.getInstance();
