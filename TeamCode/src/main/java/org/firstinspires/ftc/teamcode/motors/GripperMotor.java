@@ -14,7 +14,7 @@ public class GripperMotor {
     private DcMotor wobbleMotor;
 
     //Arm distance in encoder ticks
-    final int RANGE_MOTION = 500;
+    final int RANGE_MOTION = 600;
 
     private int targetPos = 0;
 
