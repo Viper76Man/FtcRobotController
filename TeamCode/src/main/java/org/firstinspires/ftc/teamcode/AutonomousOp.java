@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.drive.RRMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.List;
 
@@ -58,6 +60,10 @@ public class AutonomousOp extends LinearOpMode {
             // (typically 16/9).
             tfod.setZoom(2.5, 16/9);
         }
+
+        //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        //RRMecanumDrive drive = new RRMecanumDrive(hardwareMap);
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
