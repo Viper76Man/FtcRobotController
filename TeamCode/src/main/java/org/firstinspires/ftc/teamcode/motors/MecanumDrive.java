@@ -15,6 +15,11 @@ public class MecanumDrive {
         frontRightMotor = hwMap.get(DcMotor.class, "frontRightMotor");
         backLeftMotor = hwMap.get(DcMotor.class, "backLeftMotor");
         backRightMotor = hwMap.get(DcMotor.class, "backRightMotor");
+
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void drive(double y, double x, double rx){

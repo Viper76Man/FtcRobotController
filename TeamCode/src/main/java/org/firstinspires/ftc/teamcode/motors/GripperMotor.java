@@ -29,7 +29,7 @@ public class GripperMotor {
             switch (armState) {
                 case OUT:
                     wobbleMotor.setTargetPosition(targetPos);
-                    wobbleMotor.setPower(1);
+                    wobbleMotor.setPower(.7);
                     wobbleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     if (wobbleMotor.getCurrentPosition() >= targetPos - 10 && wobbleMotor.getCurrentPosition() <= targetPos + 10){
                         wobbleMotor.setPower(0);
@@ -58,4 +58,9 @@ public class GripperMotor {
             }
         }
     }
+
+    public void resetStateOut() {
+        armState = ArmState.OUT;
+    }
+
 }

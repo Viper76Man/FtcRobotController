@@ -22,7 +22,7 @@ public class ShooterServo {
 
     private static double SHOOTER_OPEN = 1;
     private static double SHOOTER_CLOSE = 0;
-    private static double SHOOTER_TIME = 130;
+    private static double SHOOTER_TIME = 140;
 
     private ElapsedTime shootTimer = new ElapsedTime();
 

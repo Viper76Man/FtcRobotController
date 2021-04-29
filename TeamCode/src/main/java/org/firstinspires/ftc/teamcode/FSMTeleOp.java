@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.motors.CompleteShooter;
 import org.firstinspires.ftc.teamcode.motors.GripperMotor;
 import org.firstinspires.ftc.teamcode.motors.IntakeMotor;
@@ -21,6 +25,7 @@ public class FSMTeleOp extends OpMode {
     GripperServos gripperServos = new GripperServos();
     GripperMotor gripperMotor = new GripperMotor();
 
+
     @Override
     public void init(){
         shooterServo.init(hardwareMap);
@@ -30,11 +35,15 @@ public class FSMTeleOp extends OpMode {
         gripperServos.init(hardwareMap);
         gripperMotor.init(hardwareMap);
 
+        gripperMotor.resetStateOut();
+
+
+
     }
 
     @Override
     public void start(){
-        //Run once on start push
+
     }
 
     @Override
@@ -88,6 +97,30 @@ public class FSMTeleOp extends OpMode {
         if(gamepad1.dpad_down){
             gripperMotor.armOut();
         }
+
+        /*if(gamepad1.options){
+            SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+            Pose2d startPose = new Pose2d(2, -38.5, Math.toRadians(0));
+            drive.setPoseEstimate(startPose);
+            completeShooter.powerShootSpeed();
+            Trajectory traj1 = drive.trajectoryBuilder(startPose)
+                    .strafeLeft(10)
+                    .build();
+            drive.followTrajectory(traj1);
+            shooterServo.singleShot();
+
+            Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                    .strafeLeft(7)
+                    .build();
+            drive.followTrajectory(traj2);
+            shooterServo.singleShot();
+
+            Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+                    .strafeLeft(7)
+                    .build();
+            drive.followTrajectory(traj3);
+            shooterServo.singleShot();
+        }*/
 
         mecanumDrive.drive(y,x,rx);
     }

@@ -15,6 +15,11 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.drive.RRMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.motors.CompleteShooter;
+import org.firstinspires.ftc.teamcode.motors.GripperMotor;
+import org.firstinspires.ftc.teamcode.motors.IntakeMotor;
+import org.firstinspires.ftc.teamcode.servos.GripperServos;
+import org.firstinspires.ftc.teamcode.servos.ShooterServo;
 
 import java.util.List;
 
@@ -41,8 +46,23 @@ public class AutonomousOp extends LinearOpMode {
 
     private int diskDetect = 0;
 
+    GripperServos gripperServos = new GripperServos();
+    GripperMotor gripperMotor = new GripperMotor();
+    CompleteShooter completeShooter = new CompleteShooter();
+    ShooterServo shooterServo = new ShooterServo();
+    IntakeMotor intakeMotor = new IntakeMotor();
+
     @Override
     public void runOpMode() {
+
+        gripperServos.init(hardwareMap);
+        gripperMotor.init(hardwareMap);
+        shooterServo.init(hardwareMap);
+        completeShooter.init(hardwareMap);
+        intakeMotor.init(hardwareMap);
+
+        gripperServos.close();
+        sleep(1000);
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
@@ -61,7 +81,7 @@ public class AutonomousOp extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(2.5, 16/9);
+            tfod.setZoom(2.5, 16 / 9);
         }
 
         //Pick SampleMecanumDrive for dashboard and RRMecanumDrive for no dashboard
@@ -74,7 +94,7 @@ public class AutonomousOp extends LinearOpMode {
 
         FtcDashboard.getInstance().startCameraStream(tfod, 0);
 
-        while(!isStarted()){
+        while (!isStarted()) {
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
@@ -109,82 +129,246 @@ public class AutonomousOp extends LinearOpMode {
                 }
             }
         }
-        Pose2d startPose = new Pose2d(-63, -54, Math.toRadians(0));
-
+        Pose2d startPose = new Pose2d(-60, -39, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
 
 
         waitForStart();
-            tfod.shutdown();
+        if (isStopRequested()) return;
 
-                telemetry.addData("Disks Detected", diskDetect);
-                telemetry.update();
+        tfod.shutdown();
+        //0 disks zone A front
+        if (diskDetect == 0) {
+            Trajectory traj1 = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(-24, -49), Math.toRadians(0))
+                    .splineTo(new Vector2d(14, -40.5), Math.toRadians(0))
 
-                Trajectory nextToDisk = drive.trajectoryBuilder(new Pose2d())
-                        .splineTo(new Vector2d(20,1),Math.toRadians(0))
-                        .build();
+                    .build();
 
-                //0 disks zone A front
-                if (diskDetect == 0) {
-                    //Drive to square A
-                    drive.followTrajectory(nextToDisk);
-                    //Arm out
-                    //Servo open
-                    //Arm in
-                    //Drive high goal shot
-                    //Shoot high goals
-                    //Drive 2nd wobble
-                    //Arm down
-                    //Servo Close
-                    //Arm up
-                    //drive to square A
-                    //Arm Down
-                    //Servo open
-                    //Arm up
-                    //Drive to white line
-                    //Stop
-                }
+            Trajectory traj2 = drive.trajectoryBuilder(traj1.end(), true)
+                    .splineTo(new Vector2d(-0, -42), Math.toRadians(180))
+                    .build();
 
-                //1 disk zone B middle
-                if (diskDetect == 1) {
-                    //Drive to square B
-                    //Arm out
-                    //Servo open
-                    //Arm in
-                    //Drive high goal shot
-                    //Shoot high goals
-                    //Drive 2nd wobble
-                    //Arm down
-                    //Servo Close
-                    //Arm up
-                    //drive to square B
-                    //Arm Down
-                    //Servo open
-                    //Arm up
-                    //Drive to white line
-                    //Stop
-                }
 
-                //4 disk zone C back
-                if (diskDetect == 4) {
-                    //Drive to square C
-                    //Arm out
-                    //Servo open
-                    //Arm in
-                    //Drive high goal shot
-                    //Shoot high goals
-                    //Drive 2nd wobble
-                    //Arm down
-                    //Servo Close
-                    //Arm up
-                    //drive to square C
-                    //Arm Down
-                    //Servo open
-                    //Arm up
-                    //Drive to white line
-                    //Stop
-                }
-            }
+            drive.followTrajectory(traj1);
+            gripperMotor.armOut();
+            sleep(250);
+            gripperServos.open();
+            sleep(250);
+            completeShooter.highGoalSpeed();
+
+
+            drive.followTrajectory(traj2);
+            sleep(250);
+            shooterServo.singleShot();
+            sleep(200);
+            shooterServo.singleShot();
+            sleep(200);
+            shooterServo.singleShot();
+            sleep(140);
+
+            drive.turn(Math.toRadians(180));
+
+            startPose = traj2.end().plus(new Pose2d(0, 0, Math.toRadians(180)));
+
+            Trajectory traj3 = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(-24, -49), Math.toRadians(180))
+                    .splineTo(new Vector2d(-39, -49), Math.toRadians(180))
+                    .build();
+
+            drive.followTrajectory(traj3);
+
+            Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                    .strafeRight(8)
+                    .build();
+
+            drive.followTrajectory(traj4);
+
+            gripperServos.close();
+            sleep(250);
+            gripperMotor.armIn();
+            sleep(250);
+
+            drive.turn(Math.toRadians(180));
+
+            startPose = traj4.end().plus(new Pose2d(0, 0, Math.toRadians(-180)));
+
+            Trajectory traj5 = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(5, -40.5), Math.toRadians(0))
+
+                    .build();
+            drive.followTrajectory(traj5);
+
+            gripperMotor.armOut();
+            sleep(250);
+            gripperServos.open();
+            sleep(250);
+
+            Trajectory traj6 = drive.trajectoryBuilder(traj5.end())
+                    .splineTo(new Vector2d(11, -40.5), Math.toRadians(0))
+                    .build();
+            drive.followTrajectory(traj6);
+
+        }
+
+        //1 disk zone B middle
+        if (diskDetect == 1) {
+            Trajectory traj1 = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(-24, -49), Math.toRadians(0))
+                    .splineTo(new Vector2d(38, -15.5), Math.toRadians(0))
+
+                    .build();
+
+            Trajectory traj2 = drive.trajectoryBuilder(traj1.end(), true)
+                    .splineTo(new Vector2d(-0, -42), Math.toRadians(180))
+                    .build();
+
+
+            drive.followTrajectory(traj1);
+            gripperMotor.armOut();
+            sleep(250);
+            gripperServos.open();
+            sleep(250);
+            completeShooter.highGoalSpeed();
+
+
+            drive.followTrajectory(traj2);
+            sleep(250);
+            shooterServo.singleShot();
+            sleep(200);
+            shooterServo.singleShot();
+            sleep(200);
+            shooterServo.singleShot();
+            sleep(140);
+
+            drive.turn(Math.toRadians(180));
+
+            startPose = traj2.end().plus(new Pose2d(0, 0, Math.toRadians(180)));
+
+            Trajectory traj3 = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(-24, -49), Math.toRadians(180))
+                    .splineTo(new Vector2d(-39, -49), Math.toRadians(180))
+                    .build();
+
+            drive.followTrajectory(traj3);
+
+            Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                    .strafeRight(8)
+                    .build();
+
+            drive.followTrajectory(traj4);
+
+            gripperServos.close();
+            sleep(250);
+            gripperMotor.armIn();
+            sleep(250);
+
+            drive.turn(Math.toRadians(180));
+
+            intakeMotor.in();
+
+            startPose = traj4.end().plus(new Pose2d(0, 0, Math.toRadians(-180)));
+
+            Trajectory traj5 = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(29, -15.5), Math.toRadians(0))
+
+                    .build();
+            drive.followTrajectory(traj5);
+
+            gripperMotor.armOut();
+            sleep(250);
+            gripperServos.open();
+            sleep(250);
+
+            Trajectory traj6 = drive.trajectoryBuilder(traj5.end(), true)
+                    .splineTo(new Vector2d(2, -28.5), Math.toRadians(180))
+                    .build();
+            completeShooter.powerShootSpeed();
+            drive.followTrajectory(traj6);
+            sleep(250);
+            shooterServo.singleShot();
+            sleep(140);
+
+            Trajectory traj7 = drive.trajectoryBuilder(traj6.end())
+                    .splineTo(new Vector2d(11, -28.5), Math.toRadians(0))
+                    .build();
+            drive.followTrajectory(traj7);
+
+        }
+
+        //4 disk zone C back
+        if (diskDetect == 4) {
+            Trajectory traj1 = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(-24, -49), Math.toRadians(0))
+                    .splineTo(new Vector2d(60, -39), Math.toRadians(0))
+
+                    .build();
+
+            Trajectory traj2 = drive.trajectoryBuilder(traj1.end(), true)
+                    .splineTo(new Vector2d(-0, -42), Math.toRadians(180))
+                    .build();
+
+
+            drive.followTrajectory(traj1);
+            gripperMotor.armOut();
+            sleep(250);
+            gripperServos.open();
+            sleep(250);
+            completeShooter.highGoalSpeed();
+
+
+            drive.followTrajectory(traj2);
+            sleep(250);
+            shooterServo.singleShot();
+            sleep(200);
+            shooterServo.singleShot();
+            sleep(200);
+            shooterServo.singleShot();
+            sleep(140);
+
+            drive.turn(Math.toRadians(180));
+
+            startPose = traj2.end().plus(new Pose2d(0, 0, Math.toRadians(180)));
+
+            Trajectory traj3 = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(-24, -49), Math.toRadians(180))
+                    .splineTo(new Vector2d(-39, -49), Math.toRadians(180))
+                    .build();
+
+            drive.followTrajectory(traj3);
+
+            Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                    .strafeRight(8)
+                    .build();
+
+            drive.followTrajectory(traj4);
+
+            gripperServos.close();
+            sleep(250);
+            gripperMotor.armIn();
+            sleep(250);
+
+            drive.turn(Math.toRadians(180));
+
+            startPose = traj4.end().plus(new Pose2d(0, 0, Math.toRadians(-180)));
+
+            Trajectory traj5 = drive.trajectoryBuilder(startPose)
+                    .splineTo(new Vector2d(52, -39), Math.toRadians(0))
+
+                    .build();
+            drive.followTrajectory(traj5);
+
+            gripperMotor.armOut();
+            sleep(250);
+            gripperServos.open();
+            sleep(250);
+
+            Trajectory traj6 = drive.trajectoryBuilder(traj5.end(), true)
+                    .splineTo(new Vector2d(11, -39), Math.toRadians(180))
+                    .build();
+            drive.followTrajectory(traj6);
+        }
+    }
 
     /**
      * Initialize the Vuforia localization engine.

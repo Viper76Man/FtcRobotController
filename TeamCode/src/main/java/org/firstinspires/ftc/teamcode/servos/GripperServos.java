@@ -9,8 +9,8 @@ public class GripperServos {
         private Servo frontServo;
         private Servo backServo;
 
-        static double GRIPPER_OPEN = 1;
-        static double GRIPPER_CLOSE = 0.5;
+        static double GRIPPER_OPEN = .5;
+        static double GRIPPER_CLOSE = 1;
 
 
         public void init(HardwareMap hwMap) {
